@@ -96,14 +96,14 @@ def smoothed_path(image, path):
 
     while end == False:
         for i,corner in enumerate(corners):
-            if corner[0] == corners[-1][0] and corner[1] == corners[-1][1]:
+            if corner[0] == corners[-1][0] and corner[1] == corners[-1][1]: # if the corner is the last
                 end = True
             elif los.check_line_of_sight(image, currentP[0], currentP[1], corner[0], corner[1]):
                 # if line of sight continue
                 continue
             else:
                 newPath.append(corners[i-1])
-                currentP = corner
+                currentP = corners[i-1]
         # remove last index from list of indexes and set that to currentP
         
     return newPath
