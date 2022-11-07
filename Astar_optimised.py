@@ -201,7 +201,7 @@ def optimal_path(start, goal, image):
             while node is not None:
                 path.append(node)
                 node = explored[node]
-            #path.reverse()
+            path.reverse()
             return path
 
         if current_node in explored:

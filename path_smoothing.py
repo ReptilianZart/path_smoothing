@@ -38,7 +38,7 @@ def find_corners(path):
                 corners.append(np.array((prevx,prevy))) # add prevx because that is where the corner is
                 prevx, prevy = x, y
                 prevdx, prevdy = dx, dy
-
+        corners.append(path[-1])
         return corners
     except Exception as e:
         print("\n------------------\nfind_corners error:\n------------------\n",e)
