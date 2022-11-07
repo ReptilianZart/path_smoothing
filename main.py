@@ -10,7 +10,7 @@ DILATION_SIZE = 6
 
 
 # open the image
-image1 = cv2.imread("blank_map_with_obstacles.pgm")
+image1 = cv2.imread("techviko.pgm")
 imageNp = np.array(image1)
 
 #dilate the map
@@ -21,8 +21,8 @@ mapgs = cv2.cvtColor(mapDilated, cv2.COLOR_BGR2GRAY)
 
 
 # find the path
-# path = A.optimal_path((433, 452),(1490, 1750), map) # techviko map
-path = A.optimal_path((100, 100),(550, 550), mapgs) # blank_map_with_obstacle.pgm
+path = A.optimal_path((433, 452),(1490, 1750), mapgs) # techviko.pgm
+#path = A.optimal_path((100, 100),(550, 550), mapgs) # blank_map_with_obstacle.pgm
 
 
 # path smoothing
