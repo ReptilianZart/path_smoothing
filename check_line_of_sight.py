@@ -5,14 +5,11 @@ def check_line_of_sight(image, x1, y1, x2, y2, thresh=200):
     # check for collisions
     for point in line:
         value = image[point[1],point[0]] # not sure why the points are flipped, but it works
-        print(value)
         if value < thresh: # colliding
             print("collision at:",point,"--value",value)
             return False
-        print(point,"value: ",value)
-
     return True
-    
+
 
 
 def get_line(x1, y1, x2, y2):

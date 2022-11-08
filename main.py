@@ -10,7 +10,8 @@ DILATION_SIZE = 6
 
 
 # open the image
-image1 = cv2.imread("techviko.pgm")
+#image1 = cv2.imread("techviko.pgm")
+image1 = cv2.imread("blank_map_with_obstacle.pgm")
 imageNp = np.array(image1)
 
 #dilate the map
@@ -21,16 +22,14 @@ mapgs = cv2.cvtColor(mapDilated, cv2.COLOR_BGR2GRAY)
 
 
 # find the path
-path = A.optimal_path((433, 452),(1490, 1750), mapgs) # techviko.pgm
-#path = A.optimal_path((100, 100),(75, 300), mapgs) # blank_map_with_obstacle.pgm
+#path = A.optimal_path((433, 452),(1490, 1750), mapgs) # techviko.pgm
+path = A.optimal_path((100, 100),(550, 450), mapgs) # blank_map_with_obstacle.pgm
 
+
+# line of sight minimisation
+newPath = ps.los_minimisation(mapgs, path)
 
 # path smoothing
-
-
-# controlPoints = ps.find_control_points(path,5)
-
-newPath = ps.smoothed_path(mapgs, path)
 
 
 
@@ -43,7 +42,6 @@ corners = ps.find_corners(path)
 cornersx = [coord[0] for coord in corners]
 cornersy = [coord[1] for coord in corners]
 plt.scatter(cornersx, cornersy)
-print("corners",corners[0],corners[1])
 
 
 # draw paths
@@ -52,8 +50,9 @@ try:
 except:
     print("no path found")
 
-try:
+""" try:
     plt.plot(*zip(*path)) # draw path
 except:
-    print("no path found")
+    print("no path found") """
+
 plt.show()

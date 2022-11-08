@@ -82,9 +82,9 @@ def display_control_points(obj):
     
 
 
-# path smoothing
+# line of sight minimisation
 # start at p1 check p1-p3, p1-p4 etc. until line of sight is false
-def smoothed_path(image, path):
+def los_minimisation(image, path):
     # find the corners
     corners = find_corners(path)
     newPath = []
@@ -97,6 +97,7 @@ def smoothed_path(image, path):
     while end == False:
         for i,corner in enumerate(corners):
             if corner[0] == corners[-1][0] and corner[1] == corners[-1][1]: # if the corner is the last
+                newPath.append(corner)
                 end = True
             elif los.check_line_of_sight(image, currentP[0], currentP[1], corner[0], corner[1]):
                 # if line of sight continue
