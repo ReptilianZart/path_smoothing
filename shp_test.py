@@ -6,7 +6,7 @@ import shp
 point1 = np.array([7,1])
 point2 = np.array([7,7])
 
-Rl = 3
+Rl = 5.61
 Rs = 1
 
 print(shp.generate_curve(Rl,Rs)[0])

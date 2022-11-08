@@ -51,13 +51,8 @@ def generate_curve(Rl, Rs):
     thetas = np.arange(0, 2*PI*mu, 0.01)
     
     for theta in thetas:
-
-        x = Rl*(epsilon)*((mu-1)*m.cos(theta) + m.cos((mu-1)*theta))
-        y = Rl*(epsilon)*((mu-1)*m.sin(theta) + m.sin((mu-1)*theta))
-
-        y = (1-r)*np.sin(theta)-r*np.sin((1-r)/r*theta)
-        x = (1-r)*np.cos(theta)+r*np.cos((1-r)/r*theta)
-
+        x=(Rl-Rs)*np.cos(theta)+Rs*np.cos((Rl-Rs)*theta/Rs)
+        y=(Rl-Rs)*np.sin(theta)-Rs*np.sin((Rl-Rs)*theta/Rs)
         coords.append((x,y))
         
     return coords
