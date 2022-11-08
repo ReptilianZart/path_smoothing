@@ -10,8 +10,8 @@ DILATION_SIZE = 6
 
 
 # open the image
-#image1 = cv2.imread("techviko.pgm")
-image1 = cv2.imread("blank_map_with_obstacle.pgm")
+#image1 = cv2.imread("./assets/techviko.pgm")
+image1 = cv2.imread("./assets/blank_map_with_obstacle.pgm")
 imageNp = np.array(image1)
 
 #dilate the map
