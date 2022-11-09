@@ -1,13 +1,19 @@
 import numpy as np
+import random as r
 from matplotlib import pyplot as plt
+from matplotlib.widgets import Slider, Button
 
 import shp 
 
 PI = np.pi
 
-point1 = np.array([0,-5])
-point2 = np.array([5,6])
+point1 = np.array([((r.random()*20)-10), ((r.random()*20)-10)])
+point2 = np.array([((r.random()*20)-10), ((r.random()*20)-10)])
 cornerP = np.array([0,0])
+
+""" point1 = np.array([1,6])
+point2 = np.array([6,1])
+cornerP = np.array([0,0]) """
 
 Rl = 3 # changes how big the curve is
 
@@ -18,8 +24,6 @@ coords, rcoords = shp.generate_curve(point1, point2, cornerP, Rl=Rl)
 print(coords[0])
 
 print("small",shp.find_smaller_angle(point1, point2))
-
-
 
 t=np.linspace(0, 2*np.pi,100)
 xc1=Rl*np.cos(t) + cornerP[0] #biggest circle
@@ -35,6 +39,5 @@ plt.scatter([point1[0], cornerP[0], point2[0], ], [point1[1], cornerP[1], point2
 
 
 plt.plot(*zip(*rcoords), label="rcoords")
-plt.plot(*zip(*coords), label="coords")
 ax.legend(loc="upper left")
 plt.show()

@@ -64,19 +64,17 @@ def generate_curve(v1, v2, center, Rl = 4):
     thetas = np.arange(0, 2*PI/mu, 0.01)
     
     for theta in thetas:
-        x=(Rl-Rs)*np.cos(theta)+Rs*np.cos((Rl-Rs)*theta/Rs) + center[0]
-        y=(Rl-Rs)*np.sin(theta)-Rs*np.sin((Rl-Rs)*theta/Rs) + center[1]
+        x=(Rl-Rs)*np.cos(theta)+Rs*np.cos((Rl-Rs)*theta/Rs)
+        y=(Rl-Rs)*np.sin(theta)-Rs*np.sin((Rl-Rs)*theta/Rs)
         coords.append((x,y))
         
     rcoords = coords
 
     # find first point acw from 1,0 and rotate there
-    firstV = v1
+    firstV = find_smaller_angle(v1, v2)
     start = np.array([1,0])
-    if angle_between(start, v2) < angle_between(start, v1):
-        firstV = v2
-    print("firstV:", firstV)
     rcoords = rotate_curve(coords, center, angle_between(start, firstV))
+
 
     return coords, rcoords
 
@@ -98,9 +96,10 @@ def rotate_curve(curve, center, theta):
 
 # find which is least rotated from [1,0] then rotate to that one or the other one
 
-def find_smaller_angle(v1, v2, acw=True):
+def find_smaller_angle(v1, v2):
     """
     finds which angle is smaller v1-v2 or v2-v1 going acw
+    returns the vector where going acw from it will be the smallest angle
     """
     x1,y1 = v1
     x2, y2 = v2
