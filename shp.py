@@ -142,11 +142,11 @@ def shp_smooth_path(path):
             new_path = np.concatenate((new_path,curve))
             # new_path = np.concatenate((new_path, np.flip(curve, axis=0)))
 
-    last_point = path[-1]
+    """     last_point = path[-1]
     print(f"new path: {np.shape(new_path)}, path[-1]: {np.shape(last_point)}")
     print(f"type: {type(last_point)}")
     print(f"ty323232pe: {type(new_path[0])}")
-    new_path = np.concatenate([new_path, last_point])
+    new_path = np.concatenate([new_path, last_point]) """
     
     
     return new_path
