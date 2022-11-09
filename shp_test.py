@@ -5,8 +5,8 @@ import shp
 
 PI = np.pi
 
-point1 = np.array([6,1])
-point2 = np.array([-5,6])
+point1 = np.array([0,-5])
+point2 = np.array([5,6])
 cornerP = np.array([0,0])
 
 Rl = 3 # changes how big the curve is
@@ -16,6 +16,9 @@ print("angle-between",shp.angle_between(point1, point2))
 
 coords, rcoords = shp.generate_curve(point1, point2, cornerP, Rl=Rl)
 print(coords[0])
+
+print("small",shp.find_smaller_angle(point1, point2))
+
 
 
 t=np.linspace(0, 2*np.pi,100)

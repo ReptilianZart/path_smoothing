@@ -97,3 +97,16 @@ def rotate_curve(curve, center, theta):
     return [rotate(center, coord, theta) for coord in curve]
 
 # find which is least rotated from [1,0] then rotate to that one or the other one
+
+def find_smaller_angle(v1, v2, acw=True):
+    """
+    finds which angle is smaller v1-v2 or v2-v1 going acw
+    """
+    x1,y1 = v1
+    x2, y2 = v2
+    dot = x1*x2 + y1*y2      # dot product between [x1, y1] and [x2, y2]
+    det = x1*y2 - y1*x2      # determinant
+    angle = m.atan2(det, dot)  # atan2(y, x) or atan2(sin, cos)
+    if angle < 0:
+        return v2
+    return v1
