@@ -77,8 +77,7 @@ def generate_curve(v1, v2, center, Rl = 4):
         rcoords = rotate_curve(coords, center, -angle_between(start, firstV))
     else:
         rcoords = rotate_curve(coords, center, angle_between(start, firstV))
-    print(f"firstV[1] < 0", firstV)
-    print(f"swapped: {swapped}")
+
     return rcoords
 
 def rotate(origin, point, angle):
@@ -110,9 +109,7 @@ def find_smaller_angle(v1, v2):
     det = x1*y2 - y1*x2      # determinant
     angle = m.atan2(det, dot)  # atan2(y, x) or atan2(sin, cos)
     if angle < 0:
-        print(f"angle < 0, v1: {v1}, v2: {v2}")
         return v2, True
-    print(f"angle > 0, v1: {v1}, v2: {v2}")
     return v1, False
 
 def transform(curve, origin, og_origin=np.array([0,0])):
@@ -129,3 +126,27 @@ def shp_curve(point1, point2, center, Rl=4):
     # transform back into old coords
     Tcurve = [point+center for point in curve]
     return Tcurve
+
+def shp_smooth_path(path):
+    path = np.array(path)
+    new_path = [path[0]]
+    prevCorner = path[0]
+    for i, corner in enumerate(path[:-1]):
+        print(f"i: {i}, corner: {corner}")
+        if i == 0 or i == len(path):
+            continue
+        else:
+            curve = shp_curve(prevCorner, path[i+1], corner)
+            prevCorner = curve[-1]
+            print(f"curve length: {len(curve)}, type: {type(curve[0])}")
+            new_path = np.concatenate((new_path,curve))
+            # new_path = np.concatenate((new_path, np.flip(curve, axis=0)))
+
+    last_point = path[-1]
+    print(f"new path: {np.shape(new_path)}, path[-1]: {np.shape(last_point)}")
+    print(f"type: {type(last_point)}")
+    print(f"ty323232pe: {type(new_path[0])}")
+    new_path = np.concatenate([new_path, last_point])
+    
+    
+    return new_path

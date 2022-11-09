@@ -5,6 +5,8 @@ import numpy as np
 import cv2 
 from matplotlib import pyplot as plt
 
+import shp
+
 ## CONSTANTS
 DILATION_SIZE = 6
 
@@ -23,13 +25,14 @@ mapgs = cv2.cvtColor(mapDilated, cv2.COLOR_BGR2GRAY)
 
 # find the path
 #path = A.optimal_path((433, 452),(1490, 1750), mapgs) # techviko.pgm
-path = A.optimal_path((100, 100),(550, 450), mapgs) # blank_map_with_obstacle.pgm
+path = A.optimal_path((100, 240),(550, 210), mapgs) # blank_map_with_obstacle.pgm
 
 
 # line of sight minimisation
 newPath = ps.los_minimisation(mapgs, path)
 
 # path smoothing
+smoothPath = shp.shp_smooth_path(newPath)
 
 
 
@@ -43,10 +46,16 @@ cornersx = [coord[0] for coord in corners]
 cornersy = [coord[1] for coord in corners]
 plt.scatter(cornersx, cornersy)
 
+print(f"\n\n-------------------\n\nsmooth path: \n{smoothPath}\n\n-------------------\n\n")
 
 # draw paths
 try:
-    plt.plot(*zip(*newPath)) # draw path
+    plt.plot(*zip(*newPath), label="los minimised path") # draw path
+except:
+    print("no path found")
+
+try:
+    plt.plot(*zip(*smoothPath), label="smooth path") # draw path
 except:
     print("no path found")
 
