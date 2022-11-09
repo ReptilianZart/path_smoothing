@@ -13,6 +13,7 @@ epsilon = Rs / Rl
 
 import math as m
 import numpy as np
+from numpy.linalg import norm
 
 PI = 3.1415
 
@@ -37,23 +38,62 @@ def calc_unit_vector(point1, point2):
     unitV = np.divide(vector, magn)
     return unitV
 
-def angle_between(v1, v2):
-    return np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0))
+def angle_between(v1, v2, acw=False):
+    """
+    if acw = True, will calculate the angle clockwise from v1 to v2
+    """
+    if not acw:
+        return np.arccos(v1.dot(v2)/(norm(v1)*norm(v2)))
+    else:
+        pass
 
 def polar2cart(polar):
     return polar[0]*m.cos(polar[1]), polar[0]*m.sin(polar[1])
 
-def generate_curve(Rl, Rs):
-    epsilon = Rs/Rl
-    mu = 1/epsilon
+def generate_curve(v1, v2, center, Rl = 4):
+    """
+    Rl defining how big the larger circle is
+    eg. how large the curve is
+    """
+    angle = angle_between(v1, v2)
+    mu = 2*PI/angle
+    Rs = Rl/mu
 
     coords = []
-    thetas = np.arange(0, 2*PI*mu, 0.01)
+
+    thetas = np.arange(0, 2*PI/mu, 0.01)
     
     for theta in thetas:
-        x=(Rl-Rs)*np.cos(theta)+Rs*np.cos((Rl-Rs)*theta/Rs)
-        y=(Rl-Rs)*np.sin(theta)-Rs*np.sin((Rl-Rs)*theta/Rs)
+        x=(Rl-Rs)*np.cos(theta)+Rs*np.cos((Rl-Rs)*theta/Rs) + center[0]
+        y=(Rl-Rs)*np.sin(theta)-Rs*np.sin((Rl-Rs)*theta/Rs) + center[1]
         coords.append((x,y))
         
-    return coords
+    rcoords = coords
 
+    # find first point acw from 1,0 and rotate there
+    firstV = v1
+    start = np.array([1,0])
+    if angle_between(start, v2) < angle_between(start, v1):
+        firstV = v2
+    print("firstV:", firstV)
+    rcoords = rotate_curve(coords, center, angle_between(start, firstV))
+
+    return coords, rcoords
+
+def rotate(origin, point, angle):
+    """
+    Rotate a point counterclockwise by a given angle around a given origin.
+    The angle should be given in radians.
+    """
+    ox, oy = origin
+    px, py = point
+
+    qx = ox + m.cos(angle) * (px - ox) - m.sin(angle) * (py - oy)
+    qy = oy + m.sin(angle) * (px - ox) + m.cos(angle) * (py - oy)
+    return qx, qy
+
+
+def rotate_curve(curve, center, theta):
+    return [rotate(center, coord, theta) for coord in curve]
+
+# find which is least rotated from [1,0] then rotate to that one or the other one
