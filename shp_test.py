@@ -35,7 +35,9 @@ ax.set_aspect('equal', adjustable='box')
 
 
 plt.plot([point1[0], cornerP[0], point2[0], ], [point1[1], cornerP[1], point2[1]], label="straigh_path")
-plt.scatter([point1[0], cornerP[0], point2[0], ], [point1[1], cornerP[1], point2[1]])
+plt.scatter([cornerP[0], point2[0]], [cornerP[1], point2[1]])
+plt.scatter([point1[0]], [point1[1]])
+
 
 
 plt.plot(*zip(*rcoords), label="rcoords")

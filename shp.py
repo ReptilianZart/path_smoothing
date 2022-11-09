@@ -64,18 +64,21 @@ def generate_curve(v1, v2, center, Rl = 4):
     thetas = np.arange(0, 2*PI/mu, 0.01)
     
     for theta in thetas:
-        x=(Rl-Rs)*np.cos(theta)+Rs*np.cos((Rl-Rs)*theta/Rs)
+        x=(Rl-Rs)*np.cos(theta)+Rs*np.cos((Rl-Rs)*theta/Rs) 
         y=(Rl-Rs)*np.sin(theta)-Rs*np.sin((Rl-Rs)*theta/Rs)
         coords.append((x,y))
         
     rcoords = coords
 
-    # find first point acw from 1,0 and rotate there
-    firstV = find_smaller_angle(v1, v2)
+    firstV, swapped = find_smaller_angle(v1, v2)
     start = np.array([1,0])
-    rcoords = rotate_curve(coords, center, angle_between(start, firstV))
-
-
+    # rotates wrong way when firstV[1] is less than 0, i think
+    if firstV[1] < 0:
+        rcoords = rotate_curve(coords, center, -angle_between(start, firstV))
+    else:
+        rcoords = rotate_curve(coords, center, angle_between(start, firstV))
+    print(f"firstV[1] < 0", firstV)
+    print(f"swapped: {swapped}")
     return coords, rcoords
 
 def rotate(origin, point, angle):
@@ -107,5 +110,7 @@ def find_smaller_angle(v1, v2):
     det = x1*y2 - y1*x2      # determinant
     angle = m.atan2(det, dot)  # atan2(y, x) or atan2(sin, cos)
     if angle < 0:
-        return v2
-    return v1
+        print(f"angle < 0, v1: {v1}, v2: {v2}")
+        return v2, True
+    print(f"angle > 0, v1: {v1}, v2: {v2}")
+    return v1, False
