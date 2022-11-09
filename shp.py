@@ -79,7 +79,7 @@ def generate_curve(v1, v2, center, Rl = 4):
         rcoords = rotate_curve(coords, center, angle_between(start, firstV))
     print(f"firstV[1] < 0", firstV)
     print(f"swapped: {swapped}")
-    return coords, rcoords
+    return rcoords
 
 def rotate(origin, point, angle):
     """
@@ -114,3 +114,18 @@ def find_smaller_angle(v1, v2):
         return v2, True
     print(f"angle > 0, v1: {v1}, v2: {v2}")
     return v1, False
+
+def transform(curve, origin, og_origin=np.array([0,0])):
+    """ assumes the original origin is 0,0
+    """
+    return [point + origin for point in curve]
+
+def shp_curve(point1, point2, center, Rl=4):
+    # transform points so center is 0,0
+    p1 = point1 - center
+    p2 = point2 - center
+    # generate the curve
+    curve = generate_curve(p1, p2, np.array([0,0]), Rl=Rl)
+    # transform back into old coords
+    Tcurve = [point+center for point in curve]
+    return Tcurve

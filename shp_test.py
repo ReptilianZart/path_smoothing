@@ -9,7 +9,7 @@ PI = np.pi
 
 point1 = np.array([((r.random()*20)-10), ((r.random()*20)-10)])
 point2 = np.array([((r.random()*20)-10), ((r.random()*20)-10)])
-cornerP = np.array([0,0])
+cornerP = np.array([((r.random()*20)-10), ((r.random()*20)-10)])
 
 """ point1 = np.array([1,6])
 point2 = np.array([6,1])
@@ -18,10 +18,11 @@ cornerP = np.array([0,0]) """
 Rl = 3 # changes how big the curve is
 
 
+
+
 print("angle-between",shp.angle_between(point1, point2))
 
-coords, rcoords = shp.generate_curve(point1, point2, cornerP, Rl=Rl)
-print(coords[0])
+rcoords = shp.shp_curve(point1, point2, cornerP, Rl=Rl)
 
 print("small",shp.find_smaller_angle(point1, point2))
 
