@@ -59,9 +59,9 @@ try:
 except:
     print("no path found")
 
-""" try:
+try:
     plt.plot(*zip(*path)) # draw path
 except:
-    print("no path found") """
+    print("no path found")
 
 plt.show()
