@@ -17,19 +17,17 @@ from numpy.linalg import norm
 
 PI = 3.1415
 
-def generate_shp_curve(before_corner, corner, after_corner):
-    """ 
-        generates a curve from 2 unit vectors and a center point
-        where the curvature can be defined by Rl and Rs
-        takes the corner point which will be the center
-    """
-    # get angle between 2 vectors
-    # mu = 360/theta
-    # 
-    return None
+
+"""
+-------------------
+| BASIC FUNCTIONS |
+-------------------
+"""
+
 
 def calc_distance(point1, point2):
     return np.linalg.norm((point2-point1))
+
 
 def calc_unit_vector(point1, point2):
     """takes np as input, point1 to point2 unit vector"""
@@ -38,47 +36,16 @@ def calc_unit_vector(point1, point2):
     unitV = np.divide(vector, magn)
     return unitV
 
-def angle_between(v1, v2, acw=False):
+
+def angle_between(v1, v2, full_rotation=False):
     """
-    if acw = True, will calculate the angle clockwise from v1 to v2
+    calculate the angle clockwise from v1 to v2
+
+    Parameters:
+    full_rotation: 
     """
-    if not acw:
-        return np.arccos(v1.dot(v2)/(norm(v1)*norm(v2)))
-    else:
-        pass
+    return np.arccos(v1.dot(v2)/(norm(v1)*norm(v2)))
 
-def polar2cart(polar):
-    return polar[0]*m.cos(polar[1]), polar[0]*m.sin(polar[1])
-
-def generate_curve(v1, v2, center, Rl = 4):
-    """
-    Rl defining how big the larger circle is
-    eg. how large the curve is
-    """
-    angle = angle_between(v1, v2)
-    mu = 2*PI/angle
-    Rs = Rl/mu
-
-    coords = []
-
-    thetas = np.arange(0, 2*PI/mu, 0.01)
-    
-    for theta in thetas:
-        x=(Rl-Rs)*np.cos(theta)+Rs*np.cos((Rl-Rs)*theta/Rs) 
-        y=(Rl-Rs)*np.sin(theta)-Rs*np.sin((Rl-Rs)*theta/Rs)
-        coords.append((x,y))
-        
-    rcoords = coords
-
-    firstV, swapped = find_smaller_angle(v1, v2)
-    start = np.array([1,0])
-    # rotates wrong way when firstV[1] is less than 0, i think
-    if firstV[1] < 0:
-        rcoords = rotate_curve(coords, center, -angle_between(start, firstV))
-    else:
-        rcoords = rotate_curve(coords, center, angle_between(start, firstV))
-
-    return rcoords
 
 def rotate(origin, point, angle):
     """
@@ -94,41 +61,113 @@ def rotate(origin, point, angle):
 
 
 def rotate_curve(curve, center, theta):
+    """
+    Rotates all the points of a curve around a center for theta radians
+    """
     return [rotate(center, coord, theta) for coord in curve]
+
+
+"""
+----------------------
+| CREATING THE CURVE |
+----------------------
+"""
+
+
+def generate_curve(v1, v2, center, Rl=4):
+    """
+    will output the hypocycloid arc 
+     - Rl defining how big the larger circle is
+     - eg. how large the curve is
+    """
+    angle = angle_between(v1, v2)
+    mu = 2*PI/angle
+    Rs = Rl/mu
+
+    coords = []
+
+    thetas = np.arange(0, 2*PI/mu, 0.01) # change 3rd argument for resolution of curve
+   
+    for theta in thetas:
+        # equation 1 from paper
+        x = (Rl-Rs)*np.cos(theta)+Rs*np.cos((Rl-Rs)*theta/Rs)
+        y = (Rl-Rs)*np.sin(theta)-Rs*np.sin((Rl-Rs)*theta/Rs)
+        coords.append((x, y))
+
+    firstV, swapped = find_smaller_angle(v1, v2)
+    start = np.array([1, 0])
+    # rotates wrong way when firstV[1] is less than 0, i think
+    if firstV[1] < 0:
+        rcoords = rotate_curve(coords, center, -angle_between(start, firstV))
+    else:
+        rcoords = rotate_curve(coords, center, angle_between(start, firstV))
+
+    if swapped:
+        rcoords.reverse()  # this ensures that the curve goes from v1-v2
+
+    return rcoords
+
 
 # find which is least rotated from [1,0] then rotate to that one or the other one
 
 def find_smaller_angle(v1, v2):
     """
     finds which angle is smaller v1-v2 or v2-v1 going acw
-    returns the vector where going acw from it will be the smallest angle
+    returns the vector where going acw from it to the next v
+    will be the smallest angle
     """
-    x1,y1 = v1
+    x1, y1 = v1
     x2, y2 = v2
     dot = x1*x2 + y1*y2      # dot product between [x1, y1] and [x2, y2]
     det = x1*y2 - y1*x2      # determinant
-    angle = m.atan2(det, dot)  # atan2(y, x) or atan2(sin, cos)
+    angle = m.atan2(det, dot)  # atan2(y, x) or atan2(sin, cos)s
     if angle < 0:
         return v2, True
     return v1, False
 
-def transform(curve, origin, og_origin=np.array([0,0])):
-    """ assumes the original origin is 0,0
+
+def transform(curve, origin):
+    """ 
+    assumes the original origin is 0,0
     """
     return [point + origin for point in curve]
 
+
 def shp_curve(point1, point2, center, Rl=4):
+    """
+    Creates a Hypocycloidal curve
+
+    distance from center to either points does not matter,
+    the curve will generate from a circle drawn arond the center
+
+    Parameters:
+    Rl -    radius of the large circle, determines how large 
+            the curve will be
+    """
     # transform points so center is 0,0
     p1 = point1 - center
     p2 = point2 - center
     # generate the curve
-    curve = generate_curve(p1, p2, np.array([0,0]), Rl=Rl)
+    curve = generate_curve(p1, p2, np.array([0, 0]), Rl=Rl)
     # transform back into old coords
     Tcurve = [point+center for point in curve]
     return Tcurve
 
+
 def shp_smooth_path(path):
+    """
+    Smooth Hypocycloidal path.
+
+    Takes in a path and smooths corners of the path 
+    using hypocycloids at each corner
+
+    Parameters:
+    path - np.array(np.int32) 
+         - original jagged path compose
+           only of the corners
+    """
     path = np.array(path)
+    print(f"path[0][0]: {type(path[0][0])}")
     new_path = [path[0]]
     prevCorner = path[0]
     for i, corner in enumerate(path[:-1]):
@@ -139,7 +178,7 @@ def shp_smooth_path(path):
             curve = shp_curve(prevCorner, path[i+1], corner)
             prevCorner = curve[-1]
             print(f"curve length: {len(curve)}, type: {type(curve[0])}")
-            new_path = np.concatenate((new_path,curve))
+            new_path = np.concatenate((new_path, curve))
             # new_path = np.concatenate((new_path, np.flip(curve, axis=0)))
 
     """     last_point = path[-1]
@@ -147,6 +186,5 @@ def shp_smooth_path(path):
     print(f"type: {type(last_point)}")
     print(f"ty323232pe: {type(new_path[0])}")
     new_path = np.concatenate([new_path, last_point]) """
-    
-    
+
     return new_path
