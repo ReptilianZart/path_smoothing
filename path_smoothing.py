@@ -3,6 +3,8 @@ import numpy as np
 from collections import namedtuple
 from scipy.interpolate import BSpline
 
+import shp
+
 
 # corner which will hols p0 to p3
 corner_control_points = namedtuple("controlPoints",["p0", "p1", "p2", "p3"])
@@ -108,5 +110,28 @@ def los_minimisation(image, path):
         # remove last index from list of indexes and set that to currentP
         
     return newPath
+
+def close_corner_merge(image, corners, min_dist = 10):
+    new_corners = [corners[0]]
+    already_merged = False
+    for i, corner in enumerate(corners, start = 1):
+        if i == len(corners) - 1:
+            break
+
+        next_corner = corners[i+1]
+        dist = shp.calc_distance(corner, next_corner)
+        
+        if already_merged:
+            already_merged = False
+            continue
+        elif dist < min_dist:
+            mid_point = (corner + next_corner) / 2
+            print(f"mid_point: {mid_point}")
+            new_corners.append(mid_point+1)
+            already_merged = True
+        else:
+            new_corners.append(corner)
+    new_corners.append(corners[-1])
+    return np.array(new_corners)
 
 

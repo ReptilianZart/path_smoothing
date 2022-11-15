@@ -45,6 +45,13 @@ cornersx = [coord[0] for coord in corners]
 cornersy = [coord[1] for coord in corners]
 plt.scatter(cornersx, cornersy)
 
+# draw new corners
+new_corners = ps.close_corner_merge(mapgs, corners, min_dist=100)
+n_cornersx = [coord[0] for coord in new_corners]
+n_cornersy = [coord[1] for coord in new_corners]
+plt.scatter(n_cornersx, n_cornersy, c="red")
+
+
 plt.imshow(image1, plt.cm.gray)  # draw map
 
 
