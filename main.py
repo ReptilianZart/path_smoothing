@@ -19,7 +19,7 @@ imageNp = np.array(image1)
 
 # dilate the map
 kernel = np.ones((DILATION_SIZE, DILATION_SIZE), np.uint8)
-img_erosion = cv2.erode(imageNp, kernel, iterations=1)
+img_erosion = cv2.erode(imageNp, kernel, iterations=3)
 mapDilated = cv2.dilate(img_erosion, kernel, iterations=1)
 mapgs = cv2.cvtColor(mapDilated, cv2.COLOR_BGR2GRAY)
 
@@ -32,41 +32,40 @@ path = A.optimal_path((433, 452), (1490, 1750), mapgs)  # techviko.pgm
 
 
 # line of sight minimisation
-try:
-    newPath = ps.los_minimisation(mapgs, path)
 
-    # path smoothing
-    smoothPath = shp.shp_smooth_path(newPath, curve_factor=4)
-
-    # Draw the images
-    plt.figure(figsize=(12, 12))
-
-    # draw corners
-    corners = ps.find_corners(path)
-    cornersx = [coord[0] for coord in corners]
-    cornersy = [coord[1] for coord in corners]
-    plt.scatter(cornersx, cornersy)
-
-except:
-    print("no path found")
+newPath = ps.los_minimisation(mapgs, path)
 
 
-plt.imshow(mapgs, plt.cm.gray)  # draw map
+# Draw the images
+plt.figure(figsize=(12, 12))
+
+# draw corners
+corners = ps.find_corners(path)
+cornersx = [coord[0] for coord in corners]
+cornersy = [coord[1] for coord in corners]
+plt.scatter(cornersx, cornersy)
+
+plt.imshow(image1, plt.cm.gray)  # draw map
+
+
+# path smoothing
+smoothPath = shp.shp_smooth_path(newPath, curve_factor=8)
+
 
 # draw paths
 try:
     plt.plot(*zip(*newPath), label="los minimised path")  # draw path
 except:
-    print("no path found")
+    print("no los")
 
 try:
     plt.plot(*zip(*smoothPath), label="smooth path")  # draw path
 except:
-    print("no path found")
+    print("no smooth path")
 
-try:
+""" try:
     plt.plot(*zip(*path))  # draw path
 except:
-    print("no path found")
+    print("no path") """
 
 plt.show()
