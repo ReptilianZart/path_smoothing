@@ -82,12 +82,25 @@ def generate_curve(v1, v2, center, Rl=4):
     """
     angle = angle_between(v1, v2)
     mu = 2*PI/angle
+    Rl = curve_factor*m.sin(angle/2)
+
+    # limit Rl to midpoint between this center and midpoint
+    # to closest corner
+    v1_to_center = calc_distance(v1, center)
+    v2_to_center = calc_distance(center, v2)
+
+    if v1_to_center > 0 and v2_to_center > 0:
+        closest_corner = min(v1_to_center, v2_to_center)
+        Rl = closest_corner/2
+
     Rs = Rl/mu
+    print(f"check::::::::: \nRs: {Rs}, Rl: {Rl}, v1_:{v1_to_center}, v2_: {v2_to_center}, mu: {mu}")
 
     coords = []
 
-    thetas = np.arange(0, 2*PI/mu, 0.01) # change 3rd argument for resolution of curve
-   
+    # change 3rd argument for resolution of curve
+    thetas = np.arange(0, 2*PI/mu, 0.01)
+
     for theta in thetas:
         # equation 1 from paper
         x = (Rl-Rs)*np.cos(theta)+Rs*np.cos((Rl-Rs)*theta/Rs)
@@ -96,7 +109,7 @@ def generate_curve(v1, v2, center, Rl=4):
 
     firstV, swapped = find_smaller_angle(v1, v2)
     start = np.array([1, 0])
-    # rotates wrong way when firstV[1] is less than 0, i think
+    # rotates wrong way when firstV[1] is less than 0
     if firstV[1] < 0:
         rcoords = rotate_curve(coords, center, -angle_between(start, firstV))
     else:
@@ -175,12 +188,13 @@ def shp_smooth_path(path):
         if i == 0 or i == len(path):
             continue
         else:
-            curve = shp_curve(prevCorner, path[i+1], corner)
+            curve = shp_curve(
+                prevCorner, path[i+1], corner, curve_factor=curve_factor)
             prevCorner = curve[-1]
             print(f"curve length: {len(curve)}, type: {type(curve[0])}")
             new_path = np.concatenate((new_path, curve))
 
-    last_point = path[-1][:,None].T # weird issue
+    last_point = path[-1][:, None].T  # weird issue
     new_path = np.concatenate((new_path, last_point))
 
     return new_path
