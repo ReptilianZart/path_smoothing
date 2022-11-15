@@ -74,7 +74,7 @@ def rotate_curve(curve, center, theta):
 """
 
 
-def generate_curve(v1, v2, center, Rl=4):
+def generate_curve(v1, v2, center, curve_factor=4):
     """
     will output the hypocycloid arc 
      - Rl defining how big the larger circle is
@@ -82,6 +82,7 @@ def generate_curve(v1, v2, center, Rl=4):
     """
     angle = angle_between(v1, v2)
     mu = 2*PI/angle
+    Rl = curve_factor*angle
     Rs = Rl/mu
 
     coords = []
@@ -133,13 +134,12 @@ def transform(curve, origin):
     return [point + origin for point in curve]
 
 
-def shp_curve(point1, point2, center, Rl=4):
+def shp_curve(point1, point2, center, curve_factor=4):
     """
     Creates a Hypocycloidal curve
 
     distance from center to either points does not matter,
     the curve will generate from a circle drawn arond the center
-
     Parameters:
     Rl -    radius of the large circle, determines how large 
             the curve will be
@@ -148,13 +148,13 @@ def shp_curve(point1, point2, center, Rl=4):
     p1 = point1 - center
     p2 = point2 - center
     # generate the curve
-    curve = generate_curve(p1, p2, np.array([0, 0]), Rl=Rl)
+    curve = generate_curve(p1, p2, np.array([0, 0]), curve_factor=curve_factor)
     # transform back into old coords
     Tcurve = [point+center for point in curve]
     return Tcurve
 
 
-def shp_smooth_path(path):
+def shp_smooth_path(path, curve_factor=4):
     """
     Smooth Hypocycloidal path.
 
@@ -175,7 +175,7 @@ def shp_smooth_path(path):
         if i == 0 or i == len(path):
             continue
         else:
-            curve = shp_curve(prevCorner, path[i+1], corner)
+            curve = shp_curve(prevCorner, path[i+1], corner, curve_factor=curve_factor)
             prevCorner = curve[-1]
             print(f"curve length: {len(curve)}, type: {type(curve[0])}")
             new_path = np.concatenate((new_path, curve))

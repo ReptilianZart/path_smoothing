@@ -1,10 +1,10 @@
-import Astar_optimised as A
-import path_smoothing as ps
-import check_line_of_sight as los
-import numpy as np
 import cv2
+import numpy as np
 from matplotlib import pyplot as plt
 
+import Astar_optimised as A
+import check_line_of_sight as los
+import path_smoothing as ps
 import shp
 
 # CONSTANTS
@@ -14,39 +14,44 @@ DILATION_SIZE = 6
 # open the image
 image1 = cv2.imread("./assets/techviko.pgm")
 #image1 = cv2.imread("./assets/blank_map_with_obstacle.pgm")
+#image1 = cv2.imread("./assets/map_dtu.pgm")
 imageNp = np.array(image1)
 
 # dilate the map
 kernel = np.ones((DILATION_SIZE, DILATION_SIZE), np.uint8)
-img_erosion = cv2.erode(imageNp, kernel, iterations=2)
+img_erosion = cv2.erode(imageNp, kernel, iterations=1)
 mapDilated = cv2.dilate(img_erosion, kernel, iterations=1)
 mapgs = cv2.cvtColor(mapDilated, cv2.COLOR_BGR2GRAY)
 
 
 # find the path
 path = A.optimal_path((433, 452), (1490, 1750), mapgs)  # techviko.pgm
-# path = A.optimal_path((100, 240),(550, 210), mapgs) # blank_map_with_obstacle.pgm
+# blank_map_with_obstacle.pgm
+#path = A.optimal_path((100, 240), (550, 210), mapgs)
+#path = A.optimal_path((220, 200), (154, 180), mapgs)
 
 
 # line of sight minimisation
-newPath = ps.los_minimisation(mapgs, path)
+try:
+    newPath = ps.los_minimisation(mapgs, path)
 
-# path smoothing
-smoothPath = shp.shp_smooth_path(newPath)
+    # path smoothing
+    smoothPath = shp.shp_smooth_path(newPath, curve_factor=4)
+
+    # Draw the images
+    plt.figure(figsize=(12, 12))
+
+    # draw corners
+    corners = ps.find_corners(path)
+    cornersx = [coord[0] for coord in corners]
+    cornersy = [coord[1] for coord in corners]
+    plt.scatter(cornersx, cornersy)
+
+except:
+    print("no path found")
 
 
-# Draw the images
-plt.figure(figsize=(12, 12))
-
-plt.imshow(image1, plt.cm.gray)  # draw map
-# draw corners
-corners = ps.find_corners(path)
-cornersx = [coord[0] for coord in corners]
-cornersy = [coord[1] for coord in corners]
-plt.scatter(cornersx, cornersy)
-
-print(
-    f"\n\n-------------------\n\nsmooth path: \n{smoothPath}\n\n-------------------\n\n")
+plt.imshow(mapgs, plt.cm.gray)  # draw map
 
 # draw paths
 try:
@@ -60,7 +65,7 @@ except:
     print("no path found")
 
 try:
-    plt.plot(*zip(*path)) # draw path
+    plt.plot(*zip(*path))  # draw path
 except:
     print("no path found")
 

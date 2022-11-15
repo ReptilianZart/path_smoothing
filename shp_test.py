@@ -1,7 +1,6 @@
-import numpy as np
 import random as r
+import numpy as np
 from matplotlib import pyplot as plt
-from matplotlib.widgets import Slider, Button
 
 import shp 
 
@@ -15,14 +14,14 @@ cornerP = np.array([((r.random()*20)-10), ((r.random()*20)-10)])
 point2 = np.array([6,1])
 cornerP = np.array([0,0]) """
 
-Rl = 3 # changes how big the curve is
+Rl = 15 # changes how big the curve is
 
 
 
 
 print("angle-between",shp.angle_between(point1, point2))
 
-rcoords = shp.shp_curve(point1, point2, cornerP, Rl=Rl)
+rcoords = shp.shp_curve(point1, point2, cornerP, curve_factor=Rl)
 
 print("small",shp.find_smaller_angle(point1, point2))
 
