@@ -40,7 +40,7 @@ newPath = ps.los_minimisation(mapgs, path)
 plt.figure(figsize=(12, 12))
 
 # draw corners
-corners = ps.find_corners(path)
+corners = ps.find_corners(newPath)
 cornersx = [coord[0] for coord in corners]
 cornersy = [coord[1] for coord in corners]
 plt.scatter(cornersx, cornersy)
@@ -49,14 +49,14 @@ plt.imshow(image1, plt.cm.gray)  # draw map
 
 
 # path smoothing
-smoothPath = shp.shp_smooth_path(newPath, curve_factor=8)
+smoothPath = shp.shp_smooth_path(newPath, curve_factor=100, max_Rl=15)
 
 
 # draw paths
-try:
+""" try:
     plt.plot(*zip(*newPath), label="los minimised path")  # draw path
 except:
-    print("no los")
+    print("no los") """
 
 try:
     plt.plot(*zip(*smoothPath), label="smooth path")  # draw path

@@ -74,7 +74,7 @@ def rotate_curve(curve, center, theta):
 """
 
 
-def generate_curve(v1, v2, center, curve_factor=4):
+def generate_curve(v1, v2, center, curve_factor=4, max_Rl=10):
     """
     will output the hypocycloid arc 
      - Rl defining how big the larger circle is
@@ -89,12 +89,16 @@ def generate_curve(v1, v2, center, curve_factor=4):
     v1_to_center = calc_distance(v1, center)
     v2_to_center = calc_distance(center, v2)
 
+    # to stop it from going to 0 at the start and end
     if v1_to_center > 0 and v2_to_center > 0:
-        closest_corner = min(v1_to_center, v2_to_center)
-        Rl = closest_corner/2
+        max_dist = min(v1_to_center, v2_to_center)/2
+        if Rl > max_dist:
+            Rl = max_dist
+    if Rl > max_Rl:
+        print(f"Rl: {Rl} so set to max_Rl: {max_Rl}")
+        Rl = max_Rl
 
     Rs = Rl/mu
-    print(f"check::::::::: \nRs: {Rs}, Rl: {Rl}, v1_:{v1_to_center}, v2_: {v2_to_center}, mu: {mu}")
 
     coords = []
 
@@ -146,7 +150,7 @@ def transform(curve, origin):
     return [point + origin for point in curve]
 
 
-def shp_curve(point1, point2, center, curve_factor=4):
+def shp_curve(point1, point2, center, curve_factor=4, max_Rl=10):
     """
     Creates a Hypocycloidal curve
 
@@ -160,13 +164,14 @@ def shp_curve(point1, point2, center, curve_factor=4):
     p1 = point1 - center
     p2 = point2 - center
     # generate the curve
-    curve = generate_curve(p1, p2, np.array([0, 0]), curve_factor=curve_factor)
+    curve = generate_curve(p1, p2, np.array(
+        [0, 0]), curve_factor=curve_factor, max_Rl=max_Rl)
     # transform back into old coords
     Tcurve = [point+center for point in curve]
     return Tcurve
 
 
-def shp_smooth_path(path, curve_factor=4):
+def shp_smooth_path(path, curve_factor=4, max_Rl=10):
     """
     Smooth Hypocycloidal path.
 
@@ -188,7 +193,8 @@ def shp_smooth_path(path, curve_factor=4):
             continue
         else:
             curve = shp_curve(
-                prevCorner, path[i+1], corner, curve_factor=curve_factor)
+                prevCorner, path[i+1], corner, curve_factor=curve_factor,
+                max_Rl=max_Rl)
             prevCorner = curve[-1]
             print(f"curve length: {len(curve)}, type: {type(curve[0])}")
             new_path = np.concatenate((new_path, curve))
