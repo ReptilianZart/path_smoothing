@@ -72,7 +72,16 @@ def rotate_curve(curve, center, theta):
 | CREATING THE CURVE |
 ----------------------
 """
-
+def transition_curve(a, b, c, length, Rl):
+    sList = np.arange(0, length, 0.05)
+    trans_curve = []
+    for s in sList:
+       x = s - (pow(s, 5) / (40 * pow(Rl, 2) * pow(length, 2)))
+       y = (pow(s, 3) / 6 * Rl) - (pow(s, 7) / (336 * pow(Rl, 3) * pow(length, 3)))
+       trans_curve.append((x,y))
+    curve = np.array(trans_curve)
+    return curve
+    
 
 def generate_curve(v1, v2, center, curve_factor=4, max_Rl=10):
     """
