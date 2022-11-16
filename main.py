@@ -12,23 +12,23 @@ DILATION_SIZE = 6
 
 
 # open the image
-image1 = cv2.imread("./assets/techviko.pgm")
+#image1 = cv2.imread("./assets/techviko.pgm")
 #image1 = cv2.imread("./assets/blank_map_with_obstacle.pgm")
-#image1 = cv2.imread("./assets/map_dtu.pgm")
+image1 = cv2.imread("./assets/map_dtu.pgm")
 imageNp = np.array(image1)
 
 # dilate the map
 kernel = np.ones((DILATION_SIZE, DILATION_SIZE), np.uint8)
-img_erosion = cv2.erode(imageNp, kernel, iterations=3)
+img_erosion = cv2.erode(imageNp, kernel, iterations=1)
 mapDilated = cv2.dilate(img_erosion, kernel, iterations=1)
 mapgs = cv2.cvtColor(mapDilated, cv2.COLOR_BGR2GRAY)
 
 
 # find the path
-path = A.optimal_path((433, 452), (1490, 1750), mapgs)  # techviko.pgm
+# path = A.optimal_path((433, 452), (1490, 1750), mapgs)  # techviko.pgm
 # blank_map_with_obstacle.pgm
 #path = A.optimal_path((100, 240), (550, 210), mapgs)
-#path = A.optimal_path((220, 200), (154, 180), mapgs)
+path = A.optimal_path((220, 200), (154, 180), mapgs)
 
 
 # line of sight minimisation
